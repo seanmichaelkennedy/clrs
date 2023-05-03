@@ -1,7 +1,15 @@
 import java.lang.reflect.Array;
 
+/*
+Note: A Queue can only store (Queue.length - 1) elements.
+Allowing the queue to actually fill results in weird behavior.
+i.e. Say queue has 3 of 4 slots filled. If you filled the 4th slot before
+dequeuing something, then tail would be equal to head and thus dequeue() would fail
+even though the queue is full.
+ */
+
 public class Queue<T> {
-    private T[] queue;
+    private final T[] queue;
     public int head = 0;
     public int tail = 0;
 
@@ -12,12 +20,12 @@ public class Queue<T> {
 
     public void enqueue(T data) throws Exception {
 
-        if ( (head - 1 == tail) || ( (head == 0) && (tail == queue.length) ) ) {
+        if ( (head - 1 == tail) || ( (head == 0) && (tail == queue.length - 1) ) ) {
             throw new Exception("Error. Overflow detected.");
         }
 
         queue[ tail ] = data;
-        if (tail == queue.length) {
+        if (tail == queue.length - 1) {
             tail = 0;
         } else {
             tail++;
@@ -42,12 +50,12 @@ public class Queue<T> {
     }
 
     public void peek() throws Exception {
-        if (head == tail) {
+        if (queue.length == 0) {
             throw new Exception("Error. Cannot call peek on empty list.");
         }
         System.out.println();
-        System.out.println("Peeking at current top: " + queue[ head ]);
-        System.out.println("Peeking at current tail: " + queue[ tail  - 1]);
+        System.out.println("Peeking at current head: " + queue[ head ]);
+        System.out.println("Peeking at current tail: " + queue[ tail ]);
         System.out.println();
     }
 
@@ -56,7 +64,7 @@ public class Queue<T> {
         stringQueue.enqueue("Apple");
         stringQueue.enqueue("Banana");
         stringQueue.enqueue("Carrot");
-        stringQueue.enqueue("Durian");
+        //stringQueue.enqueue("Durian");
         stringQueue.showQueue();
         stringQueue.peek();
         stringQueue.dequeue();
@@ -67,16 +75,17 @@ public class Queue<T> {
         doubleQueue.enqueue(3.14159);
         doubleQueue.enqueue(6.28319);
         doubleQueue.enqueue(2.71828);
-        doubleQueue.enqueue(0.57721);
+        //doubleQueue.enqueue(0.57721);
         doubleQueue.showQueue();
         doubleQueue.peek();
-        doubleQueue.dequeue();
+        doubleQueue.dequeue(); // 1
         doubleQueue.peek();
-        doubleQueue.dequeue();
+        doubleQueue.dequeue(); // 2
         doubleQueue.peek();
-        doubleQueue.dequeue();
+        doubleQueue.dequeue(); // 3
         doubleQueue.peek();
-        doubleQueue.dequeue();
-    }
+        doubleQueue.dequeue(); // 4 Note: Should fail here
+        doubleQueue.peek();
 
+    }
 }
